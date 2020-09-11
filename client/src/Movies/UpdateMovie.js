@@ -2,15 +2,7 @@ import React, {useState, useEffect} from "react";
 import {useParams, useHistory} from "react-router-dom";
 import axios from "axios";
 
-const initialState= {
 
-  id: "",
-  title: '',
-  director: '',
-  metascore: "",
-  stars: []
-
-};
 
 // The form should make a PUT request to the server when submitted
 
@@ -19,19 +11,34 @@ const initialState= {
 // the list
 
 const UpdateMovie = props => {
-    const {push} = useHistory();
-    const [item, setItem] = useState(initialState);
+
+    // const {push} = useHistory();
+    // const [item, setItem] = useState(initialState);
     const {id} = useParams();
+
+    const initialState= {
+
+        id,
+        title: '',
+        director: '',
+        metascore: "",
+        stars: []
+      
+      };
+
+     const {push} = useHistory();
+     const [item, setItem] = useState(initialState);
+    // const {id} = useParams();
 
     useEffect(()=> {
         axios
-            .get(`http://localhost:5000/update-movie/${id}`)
+            .get(`http://localhost:5000/api/movies/${id}`)
             .then(res=>{
                 console.log("this is from UpdateMovie:", res.data)
-                setItem(res.data);
+                setItem(res.data)
             })
             .catch((err)=> {
-                console.log ("oh shit! You've got an error: ",err)
+                console.log ("oh shit! You've got an error from useEffect in UpdateMovie: ",err)
             })
 
     }, [id]);
@@ -51,11 +58,11 @@ const UpdateMovie = props => {
     const handleSubmit = e => {
         e.preventDefault();
         axios
-            .put(`http://localhost:5000/update-movie/${id}`, item)
+            .put(`http://localhost:5000/api/movies/${id}`, item)
             .then((res)=> {
-                props.setItems(res.data)
+                setItem(res.data)
                 console.log("this is your updated movie!:", res.data)
-                push(`/update-movie/${id}`);
+                push(`/`);
             })
             .catch((err)=> {
                 console.log("Oh shit.. error from update movie: ", err)
@@ -69,7 +76,7 @@ const UpdateMovie = props => {
     return (
         <div>
             <h2>Update Movie</h2>
-            <form onSubmit = {handleSubmit}>
+            <form>
                 <div>
                     <input 
                     type = "text"
@@ -106,6 +113,7 @@ const UpdateMovie = props => {
                     value = {item.metascore}
                     />  
                 </div>
+                <button onClick = {handleSubmit}>Submit Change</button>
             </form>
         </div>
 
